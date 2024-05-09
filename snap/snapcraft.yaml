@@ -1,4 +1,4 @@
-name: android-tools
+name: android-platform-tools
 adopt-info: tools
 grade: stable
 confinement: strict
@@ -21,19 +21,19 @@ description: |
   grant permissions to this Snap:
 
   ```
-  sudo snap connect android-tools:adb-support
-  sudo snap connect android-tools:block-devices
-  sudo snap connect android-tools:raw-usb
-  sudo snap connect android-tools:removable-media
-  sudo snap connect android-tools:network
-  sudo snap connect android-tools:network-bind
+  sudo snap connect android-platform-tools:adb-support
+  sudo snap connect android-platform-tools:block-devices
+  sudo snap connect android-platform-tools:raw-usb
+  sudo snap connect android-platform-tools:removable-media
+  sudo snap connect android-platform-tools:network
+  sudo snap connect android-platform-tools:network-bind
   ```
 
   Creating system-wide aliases is also possible:
 
   ```
-  sudo snap alias android-tools.adb adb
-  sudo snap alias android-tools.fastboot fastboot
+  sudo snap alias android-platform-tools.adb adb
+  sudo snap alias android-platform-tools.fastboot fastboot
   ```
 
 architectures:
