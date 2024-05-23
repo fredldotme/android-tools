@@ -177,7 +177,7 @@ jobs:
       - name: prep macos
         run: |
           rm -rf /opt/homebrew/include/openssl /usr/local/opt/openssl /usr/local/include/openssl
-          brew install --overwrite --quiet brotli cmake googletest lz4 \
+          brew install --overwrite --quiet brotli cmake go googletest libusb lz4 \
           ninja pcre2 protobuf zstd
 
       - name: download source
@@ -190,15 +190,8 @@ jobs:
           tar -xf android-tools-*.tar.xz
           cd android-tools-*/
           mkdir build && cd build
-          cmake \
-            -DCMAKE_C_FLAGS="$CFLAGS" \
-            -DCMAKE_CXX_FLAGS="$CXXFLAGS" \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_INSTALL_PREFIX=$HOME/android-tools \
-            -DANDROID_TOOLS_USE_BUNDLED_FMT=ON \
-            -DANDROID_TOOLS_USE_BUNDLED_LIBUSB=ON \
-            -GNinja \
-            ..
+          cmake -DCMAKE_C_FLAGS="$CFLAGS" -DCMAKE_CXX_FLAGS="$CXXFLAGS" -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX=$HOME/android-tools -GNinja ..
           ninja --verbose
           echo -e "\n### make install ###\n"
           cmake --install .
