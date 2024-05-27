@@ -134,6 +134,11 @@ parts:
       craftctl set version="$version"
       find $CRAFT_PART_SRC/.git -type f -name rebase-apply -delete
       craftctl default
+    override-stage: |
+      craftctl default
+      cd $CRAFT_STAGE
+      rm usr/bin/mkbootimg
+      ln -sf /snap/android-platform-tools/current/usr/share/android-tools/mkbootimg/mkbootimg.py usr/bin/mkbootimg
     build-packages:
       - ninja-build
       - cmake
