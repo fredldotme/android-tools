@@ -14,7 +14,6 @@ description: |
   - fastboot
   - mke2fs.android (required by fastboot)
   - simg2img, img2simg, append2simg
-  - lpdump, lpmake, lpadd, lpflash, lpunpack
   - mkbootimg, unpack_bootimg, repack_bootimg, avbtool
 
   In order to enable the full featureset you will have to
@@ -74,31 +73,6 @@ apps:
     environment:
       LD_LIBRARY_PATH: ${SNAP}/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}
     command: usr/bin/append2simg
-    plugs: [ home, removable-media ]
-  lpdump:
-    environment:
-      LD_LIBRARY_PATH: ${SNAP}/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}
-    command: usr/bin/lpdump
-    plugs: [ home, removable-media ]
-  lpmake:
-    environment:
-      LD_LIBRARY_PATH: ${SNAP}/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}
-    command: usr/bin/lpmake
-    plugs: [ home, removable-media ]
-  lpadd:
-    environment:
-      LD_LIBRARY_PATH: ${SNAP}/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}
-    command: usr/bin/lpadd
-    plugs: [ home, removable-media ]
-  lpflash:
-    environment:
-      LD_LIBRARY_PATH: ${SNAP}/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}
-    command: usr/bin/lpflash
-    plugs: [ block-devices, home, removable-media ]
-  lpunpack:
-    environment:
-      LD_LIBRARY_PATH: ${SNAP}/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}
-    command: usr/bin/lpunpack
     plugs: [ home, removable-media ]
   mkbootimg:
     environment:
