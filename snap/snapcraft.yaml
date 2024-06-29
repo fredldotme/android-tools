@@ -27,6 +27,7 @@ description: |
   sudo snap connect android-platform-tools:removable-media
   sudo snap connect android-platform-tools:network
   sudo snap connect android-platform-tools:network-bind
+  sudo snap connect android-platform-tools:block-devices
   ```
 
   Creating system-wide aliases is also possible:
@@ -79,7 +80,7 @@ apps:
     environment:
       LD_LIBRARY_PATH: ${SNAP}/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}
     command: usr/bin/lpdump
-    plugs: [ home, removable-media ]
+    plugs: [ block-devices, home, removable-media ]
   lpmake:
     environment:
       LD_LIBRARY_PATH: ${SNAP}/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}
