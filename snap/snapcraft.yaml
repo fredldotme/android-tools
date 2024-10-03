@@ -48,13 +48,13 @@ apps:
     environment:
       LD_LIBRARY_PATH: ${SNAP}/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}
     command: usr/bin/adb
-    completer: usr/share/bash-completion/completions/adb
+    completer: usr/share/android-tools/completions/adb
     plugs: [ adb-support, network, network-bind, raw-usb, home, removable-media ]
   fastboot:
     environment:
       LD_LIBRARY_PATH: ${SNAP}/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}
     command: usr/bin/fastboot
-    completer: usr/share/bash-completion/completions/fastboot
+    completer: usr/share/android-tools/completions/fastboot
     plugs: [ raw-usb, home, removable-media ]
   mke2fs-android:
     environment:
