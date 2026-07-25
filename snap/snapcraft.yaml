@@ -153,7 +153,6 @@ parts:
       - cmake
       - build-essential
       - dpkg-dev
-      - libusb-1.0-0-dev
       - libpcre2-dev
       - googletest
       - libprotobuf-dev
@@ -168,7 +167,6 @@ parts:
     stage-packages:
       - python3-minimal
       - python3.10-minimal
-      - libusb-1.0-0
       - libbrotli1
       - libzstd1
       - liblz4-1
