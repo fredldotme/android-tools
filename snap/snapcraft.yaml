@@ -46,79 +46,79 @@ architectures:
 apps:
   adb:
     environment:
-      LD_LIBRARY_PATH: ${SNAP}/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}
+      LD_LIBRARY_PATH: ${SNAP}/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}
     command: usr/bin/adb
     completer: usr/share/android-tools/completions/adb
     plugs: [ adb-support, network, network-bind, raw-usb, home, removable-media ]
   fastboot:
     environment:
-      LD_LIBRARY_PATH: ${SNAP}/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}
+      LD_LIBRARY_PATH: ${SNAP}/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}
     command: usr/bin/fastboot
     completer: usr/share/android-tools/completions/fastboot
     plugs: [ raw-usb, home, removable-media ]
   mke2fs-android:
     environment:
-      LD_LIBRARY_PATH: ${SNAP}/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}
+      LD_LIBRARY_PATH: ${SNAP}/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}
     command: usr/bin/mke2fs.android
     plugs: [ home, removable-media ]
   simg2img:
     environment:
-      LD_LIBRARY_PATH: ${SNAP}/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}
+      LD_LIBRARY_PATH: ${SNAP}/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}
     command: usr/bin/simg2img
     plugs: [ home, removable-media ]
   img2simg:
     environment:
-      LD_LIBRARY_PATH: ${SNAP}/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}
+      LD_LIBRARY_PATH: ${SNAP}/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}
     command: usr/bin/img2simg
     plugs: [ home, removable-media ]
   append2simg:
     environment:
-      LD_LIBRARY_PATH: ${SNAP}/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}
+      LD_LIBRARY_PATH: ${SNAP}/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}
     command: usr/bin/append2simg
     plugs: [ home, removable-media ]
   lpdump:
     environment:
-      LD_LIBRARY_PATH: ${SNAP}/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}
+      LD_LIBRARY_PATH: ${SNAP}/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}
     command: usr/bin/lpdump
     plugs: [ block-devices, home, removable-media ]
   lpmake:
     environment:
-      LD_LIBRARY_PATH: ${SNAP}/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}
+      LD_LIBRARY_PATH: ${SNAP}/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}
     command: usr/bin/lpmake
     plugs: [ home, removable-media ]
   lpadd:
     environment:
-      LD_LIBRARY_PATH: ${SNAP}/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}
+      LD_LIBRARY_PATH: ${SNAP}/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}
     command: usr/bin/lpadd
     plugs: [ home, removable-media ]
   lpflash:
     environment:
-      LD_LIBRARY_PATH: ${SNAP}/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}
+      LD_LIBRARY_PATH: ${SNAP}/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}
     command: usr/bin/lpflash
     plugs: [ block-devices, home, removable-media ]
   lpunpack:
     environment:
-      LD_LIBRARY_PATH: ${SNAP}/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}
+      LD_LIBRARY_PATH: ${SNAP}/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}
     command: usr/bin/lpunpack
     plugs: [ home, removable-media ]
   mkbootimg:
     environment:
-      LD_LIBRARY_PATH: ${SNAP}/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}
+      LD_LIBRARY_PATH: ${SNAP}/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}
     command: usr/bin/python3 $SNAP/usr/bin/mkbootimg
     plugs: [ home, removable-media ]
   unpack-bootimg:
     environment:
-      LD_LIBRARY_PATH: ${SNAP}/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}
+      LD_LIBRARY_PATH: ${SNAP}/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}
     command: usr/bin/python3 $SNAP/usr/bin/unpack_bootimg
     plugs: [ home, removable-media ]
   repack-bootimg:
     environment:
-      LD_LIBRARY_PATH: ${SNAP}/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}
+      LD_LIBRARY_PATH: ${SNAP}/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}
     command: usr/bin/python3 $SNAP/usr/bin/repack_bootimg
     plugs: [ home, removable-media ]
   avbtool:
     environment:
-      LD_LIBRARY_PATH: ${SNAP}/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}
+      LD_LIBRARY_PATH: ${SNAP}/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}
     command: usr/bin/python3 $SNAP/usr/bin/avbtool
     plugs: [ home, removable-media ]
 
@@ -127,8 +127,12 @@ parts:
     plugin: cmake
     source: .
     cmake-parameters:
-      - -GNinja
       - -DCMAKE_INSTALL_PREFIX=/usr
+      - -DANDROID_TOOLS_USE_BUNDLED_FMT=ON
+      - -DANDROID_TOOLS_USE_BUNDLED_LIBUSB=ON
+      - -DANDROID_TOOLS_LIBUSB_ENABLE_UDEV=ON
+    build-environment:
+      - PATH: /opt/android-tools-build/bin:$PATH
     override-build: |
       cd $CRAFT_PART_SRC
       git config --global --add safe.directory .
@@ -136,14 +140,16 @@ parts:
       git submodule foreach 'git config --global --add safe.directory $path'
       find .git/ -type f -name rebase-apply -delete
       craftctl set version="37.0.0"
+      mkdir -p /opt/android-tools-build/bin
+      echo -e "#!/bin/bash\n/usr/bin/protoc \$@ --experimental_allow_proto3_optional" > /opt/android-tools-build/bin/protoc
+      chmod 755 /opt/android-tools-build/bin/protoc
       craftctl default
     override-stage: |
       craftctl default
       cd $CRAFT_STAGE
       rm usr/bin/mkbootimg
-      ln -sf /snap/android-platform-tools/current/usr/share/android-tools/mkbootimg/mkbootimg.py usr/bin/mkbootimg
+      ln -sf ../share/android-tools/mkbootimg/mkbootimg.py usr/bin/mkbootimg
     build-packages:
-      - ninja-build
       - cmake
       - build-essential
       - dpkg-dev
@@ -154,8 +160,7 @@ parts:
       - libbrotli-dev
       - libzstd-dev
       - liblz4-dev
-      - libfmt-dev
-      - golang
+      - libudev-dev
       - perl
       - pkg-config
       - protobuf-compiler
