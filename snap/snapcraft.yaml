@@ -131,9 +131,11 @@ parts:
       - -DCMAKE_INSTALL_PREFIX=/usr
     override-build: |
       cd $CRAFT_PART_SRC
-      version="$(git describe --abbrev=0 --tags)"
-      craftctl set version="$version"
-      find $CRAFT_PART_SRC/.git -type f -name rebase-apply -delete
+      git config --global --add safe.directory .
+      git submodule update --init
+      git submodule foreach 'git config --global --add safe.directory $path'
+      find .git/ -type f -name rebase-apply -delete
+      craftctl set version="37.0.0"
       craftctl default
     override-stage: |
       craftctl default
@@ -152,6 +154,7 @@ parts:
       - libbrotli-dev
       - libzstd-dev
       - liblz4-dev
+      - libfmt-dev
       - golang
       - perl
       - pkg-config
