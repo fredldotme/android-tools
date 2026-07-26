@@ -2,7 +2,7 @@ name: android-platform-tools
 adopt-info: tools
 grade: stable
 confinement: strict
-base: core22
+base: core24
 compression: lzo
 license: Apache-2.0
 summary: Android development tools
@@ -37,11 +37,19 @@ description: |
   sudo snap alias android-platform-tools.fastboot fastboot
   ```
 
-architectures:
-  - build-on: [amd64]
-    build-for: [amd64]
-  - build-on: [arm64]
-    build-for: [arm64]
+platforms:
+  arm64:
+    build-on: [arm64]
+  amd64:
+    build-on: [amd64]
+  armhf:
+    build-on: [armhf]
+  ppc64el:
+    build-on: [ppc64el]
+  riscv64:
+    build-on: [riscv64]
+  s390x:
+    build-on: [s390x]
 
 apps:
   adb:
@@ -161,6 +169,7 @@ parts:
       rm usr/bin/mkbootimg
       ln -sf ../share/android-tools/mkbootimg/mkbootimg.py usr/bin/mkbootimg
     build-packages:
+      - git
       - cmake
       - build-essential
       - dpkg-dev
@@ -178,8 +187,8 @@ parts:
     stage-packages:
       - openssl
       - python3-minimal
-      - python3.10-minimal
+      - python3.12-minimal
       - libbrotli1
       - libzstd1
       - liblz4-1
-      - libprotobuf23
+      - libprotobuf32t64
