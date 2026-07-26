@@ -12,7 +12,7 @@ description: |
 
   - adb
   - fastboot
-  - mke2fs.android (required by fastboot)
+  - mke2fs.android & make-f2fs (required by fastboot)
   - simg2img, img2simg, append2simg
   - lpdump, lpmake, lpadd, lpflash, lpunpack
   - mkbootimg, unpack_bootimg, repack_bootimg, avbtool
@@ -60,6 +60,11 @@ apps:
     environment:
       LD_LIBRARY_PATH: ${SNAP}/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}
     command: usr/bin/mke2fs.android
+    plugs: [ home, removable-media ]
+  make-f2fs:
+    environment:
+      LD_LIBRARY_PATH: ${SNAP}/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}
+    command: usr/bin/make_f2fs
     plugs: [ home, removable-media ]
   simg2img:
     environment:
@@ -134,15 +139,21 @@ parts:
     build-environment:
       - PATH: /opt/android-tools-build/bin:$PATH
     override-build: |
+      # Prepare sources
       cd $CRAFT_PART_SRC
       git config --global --add safe.directory .
       git submodule update --init
       git submodule foreach 'git config --global --add safe.directory $path'
       find .git/ -type f -name rebase-apply -delete
+
+      # Package version
       craftctl set version="37.0.0"
+
+      # Workaround protoc being called without required argument
       mkdir -p /opt/android-tools-build/bin
       echo -e "#!/bin/bash\n/usr/bin/protoc \$@ --experimental_allow_proto3_optional" > /opt/android-tools-build/bin/protoc
       chmod 755 /opt/android-tools-build/bin/protoc
+
       craftctl default
     override-stage: |
       craftctl default
