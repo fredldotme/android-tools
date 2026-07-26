@@ -176,6 +176,7 @@ parts:
       - protobuf-compiler
       - libgtest-dev
     stage-packages:
+      - openssl
       - python3-minimal
       - python3.10-minimal
       - libbrotli1
