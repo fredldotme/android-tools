@@ -22,12 +22,12 @@ description: |
 
   ```
   sudo snap connect android-platform-tools:adb-support
-  sudo snap connect android-platform-tools:block-devices
   sudo snap connect android-platform-tools:raw-usb
   sudo snap connect android-platform-tools:removable-media
   sudo snap connect android-platform-tools:network
   sudo snap connect android-platform-tools:network-bind
   sudo snap connect android-platform-tools:block-devices
+  sudo snap connect android-platform-tools:mount-observe
   ```
 
   Creating system-wide aliases is also possible:
