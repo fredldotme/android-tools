@@ -63,7 +63,7 @@ apps:
       LD_LIBRARY_PATH: ${SNAP}/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}
     command: usr/bin/fastboot
     completer: usr/share/android-tools/completions/fastboot
-    plugs: [ raw-usb, home, removable-media ]
+    plugs: [ raw-usb, home, removable-media, mount-observe ]
   mke2fs-android:
     environment:
       LD_LIBRARY_PATH: ${SNAP}/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}
@@ -73,7 +73,7 @@ apps:
     environment:
       LD_LIBRARY_PATH: ${SNAP}/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}
     command: usr/bin/make_f2fs
-    plugs: [ home, removable-media ]
+    plugs: [ home, removable-media, mount-observe ]
   simg2img:
     environment:
       LD_LIBRARY_PATH: ${SNAP}/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}
@@ -149,8 +149,17 @@ parts:
     override-build: |
       # Prepare sources
       cd $CRAFT_PART_SRC
-      git config --global --add safe.directory .
-      git submodule update --init
+
+      # Also ensure we have a valid Git user as Snapcrafting in
+      # Multipass might leave the detected mail address invalid.
+      git config --global user.email 2>&1 1>/dev/null || \
+          git config --global user.email "root@localhost.local"
+      git config --global user.name 2>&1 1>/dev/null || \
+          git config --global user.name "Root Localhost"
+
+      chown -R $USER $CRAFT_PART_SRC
+      git config --global --add safe.directory $CRAFT_PART_SRC
+      git submodule update --init --recursive --recommend-shallow
       git submodule foreach 'git config --global --add safe.directory $path'
       find .git/ -type f -name rebase-apply -delete
 
